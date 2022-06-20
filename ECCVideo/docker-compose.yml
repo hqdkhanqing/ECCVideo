@@ -1,0 +1,81 @@
+version: '3.7'
+services:
+  api-server:
+    image: api-server:ecci
+    container_name: api-server_ecci
+    # environment:
+      # ECCI_WEBSOCKET_PORT: 8989
+    # volumes:
+    #   - ./api-server/server/:/api-server/
+    #   - ./wait-for-postgres.sh:/api-server/wait-for-postgres.sh:z
+    ports:
+      - "9000:8000"
+    depends_on:
+      - db
+      - channel_redis
+  
+  db:
+    image: postgres:11.4
+    container_name: edgeaiPostgres_ecci
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=edgeai
+    ports:
+      - "5432:5432"
+    
+  channel_redis:
+    image: redis:2.8
+    container_name: channel_redis
+
+  controller:
+    image: controller:ecci
+    container_name: controller
+    # environment:
+      # ECCI_CONTROLLER_WS_IP: 39.99.146.169
+      # ECCI_CONTROLLER_WS_PORT: 8989
+      # ECCI_CONTROLLER_MQ_IP: 39.99.146.169
+      # ECCI_CONTROLLER_MQ_PORT: 1883
+      # ECCI_CONTROLLER_MQ_USERNAME: admin
+      # ECCI_CONTROLLER_MQ_PASSWORD: admin123
+    # volumes:
+    #   - ./controller/src/:/controller/
+    #   - ./wait-for-api-server-and-emqx.sh:/controller/wait-for-api-server-and-emqx.sh:z
+    depends_on:
+      - api-server
+      - orchestrator
+      - emqx
+
+  orchestrator:
+    image: orchestrator:ecci
+    container_name: orchestrator
+    # environment:
+      # ECCI_WEBSOCKET_IP: 39.99.146.169
+      # ECCI_WEBSOCKET_PORT: 8989
+    depends_on:
+      - api-server
+
+  # system-pubsub-monitor:
+  #   image: pubsub-monitor:system
+  #   container_name: system-pubsub-monitor
+  #   # environment:
+  #     # ECCI_MONITOR_SOURCE_IP: emqx
+  #     # ECCI_MONITOR_SOURCE_PORT: 1883
+  #     # ECCI_MONTTOR_SOURCE_USERNAME: admin
+  #     # ECCI_MONITOR_SOURCE_PASSWORD: admin123
+  #     # ECCI_MONITOR_FORWARD_IP: api-server
+  #     # ECCI_MONITOR_FORWARD_PORT: 8989
+  #     # ECCI_MONTTOR_FORWARD_USERNAME: admin
+  #     # ECCI_MONITOR_FORWARD_PASSWORD: admin123
+  #   depends_on:
+  #     - emqx
+  #     - api-server
+    
+
+  emqx:
+    image: emqx/emqx
+    container_name: emqx_ecci
+    expose:
+      - "1883"
+    ports:
+      - "1883:1883"

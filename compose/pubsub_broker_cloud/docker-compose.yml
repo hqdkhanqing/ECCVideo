@@ -1,0 +1,8 @@
+version: "2.4"
+services:
+  ecci_cloud_broker:
+    image: registry.gitlab.com/wangluhui/edgeai/pubsub-broker:latest-cloud
+    container_name: ecci_cloud_broker
+    restart: always
+    ports:
+      - "${ECCI_CLOUD_BROKER_PORT}:1883"

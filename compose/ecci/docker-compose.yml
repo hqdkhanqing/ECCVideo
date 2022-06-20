@@ -1,0 +1,96 @@
+version: '3.7'
+services:
+  api-server:
+    image: registry.gitlab.com/wangluhui/edgeai/api-server:latest
+    container_name: api-server_ecci
+    environment:
+      ECCI_BROKER_IP: ${ECCI_BROKER_IP}
+      ECCI_BROKER_PORT: ${ECCI_BROKER_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    # volumes:
+    #   - ./api-server/server/:/api-server/
+    #   - ./wait-for-postgres.sh:/api-server/wait-for-postgres.sh:z
+    restart: always
+    ports:
+      - "${ECCI_HTTP_PORT}:8000"
+    depends_on:
+      - db
+      - channel_redis
+  
+  db:
+    image: postgres:11.4
+    container_name: edgeaiPostgres_ecci
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    expose:
+      - "5432"
+    # ports:
+    #   - "5432:5432"
+    
+  channel_redis:
+    image: redis:2.8
+    container_name: channel_redis
+    restart: always
+
+  controller:
+    image: registry.gitlab.com/wangluhui/edgeai/controller:latest
+    container_name: controller
+    # environment:
+      # ECCI_CONTROLLER_WS_IP: 39.99.146.169
+      # ECCI_CONTROLLER_WS_PORT: 8989
+      # ECCI_CONTROLLER_MQ_IP: 39.99.146.169
+      # ECCI_CONTROLLER_MQ_PORT: 1883
+      # ECCI_CONTROLLER_MQ_USERNAME: admin
+      # ECCI_CONTROLLER_MQ_PASSWORD: admin123
+    # volumes:
+    #   - ./controller/src/:/controller/
+    #   - ./wait-for-api-server-and-emqx.sh:/controller/wait-for-api-server-and-emqx.sh:z
+    restart: always
+    depends_on:
+      - api-server
+      - orchestrator
+      - emqx
+
+  orchestrator:
+    image: registry.gitlab.com/wangluhui/edgeai/orchestrator:latest
+    container_name: orchestrator
+    # environment:
+      # ECCI_WEBSOCKET_IP: 39.99.146.169
+      # ECCI_WEBSOCKET_PORT: 8989
+    restart: always
+    depends_on:
+      - api-server
+
+  system-pubsub-monitor:
+    image: registry.gitlab.com/wangluhui/edgeai/pubsub-monitor:latest-system
+    container_name: system-pubsub-monitor
+    restart: always
+    # environment:
+      # ECCI_MONITOR_SOURCE_IP: emqx
+      # ECCI_MONITOR_SOURCE_PORT: 1883
+      # ECCI_MONTTOR_SOURCE_USERNAME: admin
+      # ECCI_MONITOR_SOURCE_PASSWORD: admin123
+      # ECCI_MONITOR_FORWARD_IP: api-server
+      # ECCI_MONITOR_FORWARD_PORT: 8989
+      # ECCI_MONTTOR_FORWARD_USERNAME: admin
+      # ECCI_MONITOR_FORWARD_PASSWORD: admin123
+    depends_on:
+      - emqx
+      - api-server
+    
+
+  emqx:
+    # image: emqx/emqx
+    image: registry.gitlab.com/wangluhui/edgeai/pubsub-broker:latest-system
+    container_name: emqx_ecci
+    restart: always
+    expose:
+      - "1883"
+    ports:
+      - "${ECCI_BROKER_PORT}:1883"

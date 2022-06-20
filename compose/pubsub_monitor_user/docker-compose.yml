@@ -1,0 +1,15 @@
+version: "2.4"
+services:
+  ecci_user_broker_monitor:
+    image: registry.gitlab.com/wangluhui/edgeai/pubsub-monitor:latest-user
+    container_name: ecci_user_broker_monitor
+    env_file: .env
+    # environment:
+    #   ECCI_MONITOR_SOURCE_IP: ${ECCI_LOCAL_BROKER_IP}
+    #   ECCI_MONITOR_SOURCE_PORT: ${ECCI_LOCAL_BROKER_PORT}
+    #   ECCI_MONITOR_FORWARD_BROKER_ID: ${ECCI_LOCAL_BROKER_ID}
+    #   ECCI_MONITOR_FORWARD_IP: ${ECCI_BROKER_IP}
+    #   ECCI_MONITOR_FORWARD_PORT: ${ECCI_BROKER_PORT}
+    #   ECCI_MONITOR_FORWARD_USERNAME: ${ECCI_USERNAME}
+    #   ECCI_MONITOR_FORWARD_PASSWORD: ${ECCI_PASSWORD}
+    restart: always

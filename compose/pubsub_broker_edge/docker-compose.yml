@@ -1,0 +1,9 @@
+version: "2.4"
+services:
+  ecci_edge_broker:
+    image: registry.gitlab.com/wangluhui/edgeai/pubsub-broker:latest-edge
+    container_name: ecci_edge_broker
+    env_file: .env
+    restart: always
+    ports:
+      - "${ECCI_EDGE_BROKER_PORT}:1883"

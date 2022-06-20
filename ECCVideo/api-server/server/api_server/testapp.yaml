@@ -1,0 +1,62 @@
+appname: testapp             
+containers:                       
+    container1:                   
+        image: proj1/repo1:1.0    
+        device: 2ac0440c-55c0-11e9-9c87-c8e0eb18e6a7                
+        parameters:              
+            KEY2: value
+        wires:                   
+            container2:
+                from: OUT_0
+                to: IN_0
+        location:                  
+            layoutX: 223
+            layoutY: 334
+    container2: 
+        image: proj2/repo1:1.0
+        device: 2ac0440c-55c0-11e9-9c87-c8e0eb18e6a7
+        parameters:
+            MODEL: value
+        wires: 
+            container3:
+                from: OUT_0
+                to: IN_0
+            container4:
+                from: OUT_1
+                to: IN_0      
+        location:
+            layoutX: 223
+            layoutY: 334
+    container3: 
+        image: proj2/repo2:1.0
+        device: 2ac0440c-55c0-11e9-9c87-c8e0eb18e6a7
+        wires: 
+            container5:
+                from: OUT_0
+                to: IN_0    
+        location:                  
+            layoutX: 223
+            layoutY: 334
+    container4: 
+        image: proj2/repo2:1.0
+        device: c17f1358-55c4-11e9-881e-c8e0eb18e6a7
+        wires: 
+            container5:
+                from: OUT_0
+                to: IN_0    
+        location:     
+            layoutX: 223
+            layoutY: 334
+    container5:
+        image: proj2/repo2:1.0
+        device: c17f1358-55c4-11e9-881e-c8e0eb18e6a7
+        parameters:
+            STORAGE: value
+            KEY3: value
+        location:     
+            layoutX: 223
+            layoutY: 334
+        
+devices:
+    - c17f1358-55c4-11e9-881e-c8e0eb18e6a7
+    - 2ac0440c-55c0-11e9-9c87-c8e0eb18e6a7 

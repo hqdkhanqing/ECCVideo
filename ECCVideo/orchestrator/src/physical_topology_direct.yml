@@ -1,0 +1,59 @@
+appname: simpleapp
+containers:
+    - name: cloud
+      image: registry.gitlab.com/iotdata-lab-xjtu/edgeai/edgeai/simpleapp_cloud:latest
+      type: controller
+      resources: # cpu & mem resources
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: 8u3YcE6UXusmCKuMnKLyBj
+      env:
+          ECCI_BRIDGE_MOUNTPOINTS: "['edgeai/']"
+          ECCI_PUB_TARGETS: "{'edge1': 'LTx9ykE849hfMZF6ypmYs7', 'edge2': 'LTx9ykE849hfMZF6ypmYs7'}"
+          ECCI_CONTAINER_TYPE: cloud
+    - name: edge1
+      image: registry.gitlab.com/iotdata-lab-xjtu/edgeai/edgeai/simpleapp_edge1:latest
+      type: component
+      resources: # cpu & mem resources
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: 6h5tnC27EKDKqUkAwSyjEc
+      env:
+          ECCI_APP_CONTROLLER_CONTAINER: "{'cloud': 'hgZmgH2so7Nmy85mVKnU3F'}"
+          ECCI_PUB_TARGETS: "{'edge2': 'LTx9ykE849hfMZF6ypmYs7'}"
+          ECCI_CONTAINER_TYPE: edge
+    - name: edge2
+      image: registry.gitlab.com/iotdata-lab-xjtu/edgeai/edgeai/simpleapp_edge2:latest
+      type: component
+      resources: # cpu & mem resources
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+
+      agent: 6h5tnC27EKDKqUkAwSyjEc
+      env:
+          ECCI_APP_CONTROLLER_CONTAINER: "{'cloud': 'hgZmgH2so7Nmy85mVKnU3F'}"
+          ECCI_PUB_TARGETS: "{'cloud': 'hgZmgH2so7Nmy85mVKnU3F'}"
+          ECCI_CONTAINER_TYPE: edge
+connections:
+    cloud:
+        - edge1
+        - edge2
+    edge1:
+        - edge2
+    edge2:
+        - cloud
+agents:
+    - 6h5tnC27EKDKqUkAwSyjEc
+    - 8u3YcE6UXusmCKuMnKLyBj

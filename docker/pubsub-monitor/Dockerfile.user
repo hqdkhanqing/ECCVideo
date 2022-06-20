@@ -1,0 +1,22 @@
+FROM python:3.6.9-alpine3.10
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /pubsub_monitor/
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+RUN apk add  --update netcat-openbsd && rm -rf /var/cache/apk/*
+
+COPY docker/pubsub-monitor/requirements.txt .
+RUN pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+COPY docker/pubsub-monitor/pubsub-monitor-entrypoint.sh .
+
+COPY edgeai/pubsub-monitor/src .
+
+ENV ECCI_MONITOR_MODE user
+
+WORKDIR /pubsub_monitor/
+
+ENTRYPOINT ["./pubsub-monitor-entrypoint.sh"]
+
+CMD ["python3","main.py"]

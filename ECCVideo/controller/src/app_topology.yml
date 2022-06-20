@@ -1,0 +1,136 @@
+appname: DPTest
+containers:
+    - name: cloud_manager
+      image: cloud_manager:v1
+      volumes:
+          - /root/liqian/edgeai-video/:/edgeai
+      resources:
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: cloud_manager_agent1
+      env:
+          ECCI_PUB_TARGETS: "{'edge_manager_0': 'edge_broker_id_1', 'edge_manager_1':\
+              \ 'edge_broker_id_2', 'params_update': 'cloud_broker_id'}"
+    - name: params_update
+      image: params_update:v1
+      env:
+          BATCH_SIZE: 24
+          EPOCH: 1
+          DELAY: 3
+          ECCI_PUB_TARGETS: "{'mode_train_0': 'edge_broker_id_1', 'mode_train_1':\
+              \ 'edge_broker_id_1', 'mode_train_2': 'edge_broker_id_2'}"
+          ECCI_BRIDGE_MOUNTPOINTS: "['bridge', '/']"
+      resources:
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: cloud_manager_agent1
+    - name: edge_manager_0
+      image: edge_manager:v1
+      resources:
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: edge_manager_agent1
+      env:
+          ECCI_PUB_TARGETS: "{'mode_train_0': 'edge_broker_id_1', 'mode_train_1':\
+              \ 'edge_broker_id_1'}"
+    - name: edge_manager_1
+      image: edge_manager:v1
+      resources:
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: edge_manager_agent2
+      env:
+          ECCI_PUB_TARGETS: "{'mode_train_2': 'edge_broker_id_2'}"
+    - name: mode_train_0
+      image: mode_train:v1
+      env:
+          EPOCH: 1
+          DELAY: 1
+          BATCH_SIZE: 24
+          TEST_NUM: 100
+          DATA_ROOT: ./data/
+          RESULT_ROOT: ./result/
+          ECCI_PUB_TARGETS: "{'params_update': 'cloud_broker_id'}"
+      volumes:
+          - /root/liqian/edgeai-video/:/code
+      resources:
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: edge1_agent1
+    - name: mode_train_1
+      image: mode_train:v1
+      env:
+          EPOCH: 1
+          DELAY: 1
+          BATCH_SIZE: 24
+          TEST_NUM: 100
+          DATA_ROOT: ./data/
+          RESULT_ROOT: ./result/
+          ECCI_PUB_TARGETS: "{'params_update': 'cloud_broker_id'}"
+      volumes:
+          - /root/liqian/edgeai-video/:/code
+      resources:
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: edge1_agent2
+    - name: mode_train_2
+      image: mode_train:v1
+      env:
+          EPOCH: 1
+          DELAY: 1
+          BATCH_SIZE: 24
+          TEST_NUM: 100
+          DATA_ROOT: ./data/
+          RESULT_ROOT: ./result/
+          ECCI_PUB_TARGETS: "{'params_update': 'cloud_broker_id'}"
+      volumes:
+          - /root/liqian/edgeai-video/:/code
+      resources:
+          cpu:
+              cpu_count: 2
+              cpu_percent: 50
+          mem:
+              mem_limit: 1000000000
+              memswap_limit: 2000000000
+      agent: edge2_agent1
+connections:
+    cloud_manager:
+        - edge_manager
+        - params_update
+    edge_manager:
+        - mode_train
+    mode_train:
+        - params_update
+    params_update:
+        - mode_train
+agents:
+    - edge_manager_agent2
+    - cloud_manager_agent1
+    - edge1_agent1
+    - edge1_agent2
+    - edge2_agent1
+    - edge_manager_agent1

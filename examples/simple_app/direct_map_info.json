@@ -1,0 +1,17 @@
+{
+    "policy":"direct",
+    "maps":[
+        {
+            "container":"cloud",
+            "agent":"需根据agent_id配置"
+        },
+        {
+            "container":"edge1",
+            "agent":"需根据agent_id配置"
+        },
+        {
+            "container":"edge2",
+            "agent":"需根据agent_id配置"
+        }
+    ]
+}

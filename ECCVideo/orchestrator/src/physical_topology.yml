@@ -1,0 +1,134 @@
+appname: task_three_test
+containers:
+    - name: cloud_manager
+      image: registry.gitlab.com/gyf0111/ecci_test_image/cloud_manager_bc:latest
+      type: controller
+
+      agent: DFc5yLtgbqsbb8QiaTcqsf
+      env:
+          ECCI_APP_PUB_TARGETS_GROUPS: "['edge_manager', 'params_update']"
+          ECCI_PUB_TARGETS: "{'edge_manager_0': '6JyZi5jLzYBerKWhuriWDd', 'edge_manager_1':\
+              \ 'zU65jqL9tsLjPSvtQWyrfU', 'edge_manager_2': '6JyZi5jLzYBerKWhuriWDd',\
+              \ 'params_update': 'mC6F33BEWiynJfvzv4LtEL'}"
+    - name: params_update
+      image: registry.gitlab.com/gyf0111/ecci_test_image/params_update_bc:latest
+      type: component
+      env:
+          BATCH_SIZE: 24
+          EPOCH: 1
+          DELAY: 3
+          F: 5
+          img_depth: 1
+          num_filt1: 10
+          num_filt2: 10
+
+          ECCI_APP_CONTROLLER_CONTAINER: "{'cloud_manager': 'mC6F33BEWiynJfvzv4LtEL'}"
+          ECCI_APP_PUB_TARGETS_GROUPS: "['mode_train']"
+          ECCI_PUB_TARGETS: "{'mode_train_0': '6JyZi5jLzYBerKWhuriWDd', 'mode_train_1':\
+              \ 'zU65jqL9tsLjPSvtQWyrfU', 'mode_train_2': '6JyZi5jLzYBerKWhuriWDd'}"
+          ECCI_BRIDGE_MOUNTPOINTS: "['edgeai/', 'edge_broker_2/']"
+      agent: DFc5yLtgbqsbb8QiaTcqsf
+    - name: edge_manager_0
+      image: registry.gitlab.com/gyf0111/ecci_test_image/edge_manager_bc:latest
+      type: controller
+
+      agent: R5HPdAdht75E65jsqZ7HEj
+      env:
+          ECCI_APP_CONTROLLER_CONTAINER: "{'cloud_manager': 'mC6F33BEWiynJfvzv4LtEL'}"
+          ECCI_APP_PUB_TARGETS_GROUPS: "['mode_train']"
+          ECCI_PUB_TARGETS: "{'mode_train_0': '6JyZi5jLzYBerKWhuriWDd', 'mode_train_2':\
+              \ '6JyZi5jLzYBerKWhuriWDd'}"
+    - name: edge_manager_1
+      image: registry.gitlab.com/gyf0111/ecci_test_image/edge_manager_bc:latest
+      type: controller
+
+      agent: 38mR6PTheDXJoYq48HYvVD
+      env:
+          ECCI_APP_CONTROLLER_CONTAINER: "{'cloud_manager': 'mC6F33BEWiynJfvzv4LtEL'}"
+          ECCI_APP_PUB_TARGETS_GROUPS: "['mode_train']"
+          ECCI_PUB_TARGETS: "{'mode_train_1': 'zU65jqL9tsLjPSvtQWyrfU'}"
+    - name: edge_manager_2
+      image: registry.gitlab.com/gyf0111/ecci_test_image/edge_manager_bc:latest
+      type: controller
+
+      agent: k97gAp9KsPTzAthZeDLcVB
+      env:
+          ECCI_APP_CONTROLLER_CONTAINER: "{'cloud_manager': 'mC6F33BEWiynJfvzv4LtEL'}"
+          ECCI_APP_PUB_TARGETS_GROUPS: "['mode_train']"
+          ECCI_PUB_TARGETS: "{'mode_train_0': '6JyZi5jLzYBerKWhuriWDd', 'mode_train_2':\
+              \ '6JyZi5jLzYBerKWhuriWDd'}"
+    - name: mode_train_0
+      image: registry.gitlab.com/gyf0111/ecci_test_image/mode_train_bc_modify:latest
+      type: component
+      env:
+          EPOCH: 1
+          DELAY: 1
+          BATCH_SIZE: 24
+          TEST_NUM: 100
+          DATA_ROOT: './data/'
+          RESULT_ROOT: './result/'
+          F: 5
+          img_depth: 1
+          num_filt1: 10
+          num_filt2: 10
+          INTERVAL_STEPS: 5
+
+          ECCI_APP_CONTROLLER_CONTAINER: "{'edge_manager_2': '6JyZi5jLzYBerKWhuriWDd'}"
+          ECCI_APP_PUB_TARGETS_GROUPS: "['params_update']"
+          ECCI_PUB_TARGETS: "{'params_update': 'mC6F33BEWiynJfvzv4LtEL'}"
+      agent: R5HPdAdht75E65jsqZ7HEj
+    - name: mode_train_1
+      image: registry.gitlab.com/gyf0111/ecci_test_image/mode_train_bc_modify:latest
+      type: component
+      env:
+          EPOCH: 1
+          DELAY: 1
+          BATCH_SIZE: 24
+          TEST_NUM: 100
+          DATA_ROOT: './data/'
+          RESULT_ROOT: './result/'
+          F: 5
+          img_depth: 1
+          num_filt1: 10
+          num_filt2: 10
+          INTERVAL_STEPS: 5
+
+          ECCI_APP_CONTROLLER_CONTAINER: "{'edge_manager_2': '6JyZi5jLzYBerKWhuriWDd'}"
+          ECCI_APP_PUB_TARGETS_GROUPS: "['params_update']"
+          ECCI_PUB_TARGETS: "{'params_update': 'mC6F33BEWiynJfvzv4LtEL'}"
+      agent: 38mR6PTheDXJoYq48HYvVD
+    - name: mode_train_2
+      image: registry.gitlab.com/gyf0111/ecci_test_image/mode_train_bc_modify:latest
+      type: component
+      env:
+          EPOCH: 1
+          DELAY: 1
+          BATCH_SIZE: 24
+          TEST_NUM: 100
+          DATA_ROOT: './data/'
+          RESULT_ROOT: './result/'
+          F: 5
+          img_depth: 1
+          num_filt1: 10
+          num_filt2: 10
+          INTERVAL_STEPS: 5
+
+          ECCI_APP_CONTROLLER_CONTAINER: "{'edge_manager_2': '6JyZi5jLzYBerKWhuriWDd'}"
+          ECCI_APP_PUB_TARGETS_GROUPS: "['params_update']"
+          ECCI_PUB_TARGETS: "{'params_update': 'mC6F33BEWiynJfvzv4LtEL'}"
+      agent: k97gAp9KsPTzAthZeDLcVB
+connections:
+    cloud_manager:
+        - edge_manager
+        - params_update
+    edge_manager:
+        - mode_train
+    mode_train:
+        - params_update
+    params_update:
+        - mode_train
+agents:
+    - 38mR6PTheDXJoYq48HYvVD
+    - R5HPdAdht75E65jsqZ7HEj
+    - k97gAp9KsPTzAthZeDLcVB
+    - DFc5yLtgbqsbb8QiaTcqsf

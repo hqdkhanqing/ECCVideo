@@ -1,0 +1,11 @@
+FROM python:3.6.9-alpine3.10
+
+COPY edgeai/orchestrator/ /orchestrator/
+
+RUN pip install pip -U &&\
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple &&\
+    pip install -r /orchestrator/requirements.txt
+
+WORKDIR /orchestrator
+
+CMD ['python','src/main.py']

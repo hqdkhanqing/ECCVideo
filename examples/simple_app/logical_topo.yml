@@ -1,0 +1,41 @@
+Logical_topolopy: simpleapp
+containers:
+  - name: cloud
+    image: registry.gitlab.com/iotdata-lab-xjtu/edgeai/edgeai/simpleapp_cloud:latest
+    type: controller
+    resources:  # cpu & mem resources
+      cpu:
+          cpu_count: 2
+          cpu_percent: 50
+      mem:
+          mem_limit: 1000000000
+          memswap_limit: 2000000000
+  - name: edge1
+    image: registry.gitlab.com/iotdata-lab-xjtu/edgeai/edgeai/simpleapp_edge1:latest
+    type: component
+    resources:  # cpu & mem resources
+      cpu:
+          cpu_count: 2
+          cpu_percent: 50
+      mem:
+          mem_limit: 1000000000
+          memswap_limit: 2000000000
+  - name: edge2
+    image: registry.gitlab.com/iotdata-lab-xjtu/edgeai/edgeai/simpleapp_edge2:latest
+    type: component
+    resources:  # cpu & mem resources
+      cpu:
+          cpu_count: 2
+          cpu_percent: 50
+      mem:
+          mem_limit: 1000000000
+          memswap_limit: 2000000000
+
+connections:
+  cloud:
+    - edge1
+    - edge2
+  edge1:
+    - edge2
+  edge2:
+    - cloud
