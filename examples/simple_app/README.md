@@ -1,5 +1,5 @@
 # 应用逻辑说明
-应用共包含cloud、edge1、edge2三个容器，其中cloud位于中心云服务器、edge1、edge2位于边缘云服务器
+应用共包含cloud、edge1、edge2三个容器，其中cloud位于中心云服务器、edge1、edge2位于边缘服务器
 
 ## 第一步
 edge1容器启动后，告知cloud已经启动，进入阻塞
